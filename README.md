@@ -38,3 +38,23 @@ No external packages needed (standard library only).
 1. Clone the repo
 2. From inside the `crypto_analysis` folder, run: main.py
 3. This fetches live data for all 5 coins, computes the metrics, applies both rules, and writes a timestamped `.md` file into `reports/`.
+
+
+# AI_LOG
+
+Five most important prompts used while building this project, and what the AI got wrong or I changed by hand.
+
+## 1. "I'd like a trend check and volatility question, and also want to add Twitter sentiment analysis of politicians."
+The AI pushed back hard on the sentiment-analysis half: X/Twitter's API isn't realistically free for pulling multiple politicians' historical tweets, and any real sentiment scoring would almost certainly mean calling an AI model inside the workflow, which the assignment explicitly forbids. Decided to drop that idea for this submission and keep the question to volatility + trend across 5 coins.
+
+## 2. "Give me a comprehensive, stage-by-stage plan before any code."
+Forced a full plan (fetch -> metrics -> rules -> report) before accepting any code, so I understood the shape of the project before touching it, rather than being handed a finished script.
+
+## 3. "Give me the git commands to commit the README fix."
+The AI's first answer assumed a bash-style shell (`cmd1 && cmd2 && cmd3`). It failed immediately on my actual environment, Windows PowerShell 5.1, which doesn't support `&&` as a separator. Had to get PowerShell-correct syntax (one command per line) instead.
+
+## 4. "How do I create README.md with the question in it?"
+The AI's suggested command (`echo "..." > README.md` in PowerShell) silently saved the file as UTF-16 instead of UTF-8, PowerShell's default redirect encoding. Took two more rounds, my first attempted fix in VS Code didn't actually change the underlying bytes, before it got resolved by editing the file directly on GitHub's web UI.
+
+## 5. "What data cleaning does this data need?"
+The AI used a quick fetch-and-summarize tool (not real code) to check ADAUSD's candle count and got it wrong: reported 720 total entries and an odd `"last"` field, different from BTC and XRP. Running the actual `fetch.py` script against live data showed all 5 coins behave identically (720 complete + 1 in-progress). Lesson: the AI's own quick read of a page isn't the same as running real code, don't trust it when the two disagree.
